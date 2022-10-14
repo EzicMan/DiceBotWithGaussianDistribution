@@ -23,7 +23,7 @@ def parseStr(diceStr):
     for i in range(0,repeats):
         tempDiceStr = diceStr
         cubesStr = ''
-        x = re.findall('[ \+\-\*\/][\+\-]d(?:\([0-9]+\))?[0-9]+',tempDiceStr)
+        x = re.findall('[ \+\-\*\/][\+\-]d(?:\([\+\-]?[0-9]+\))?[0-9]+',tempDiceStr)
         for current in x:
             stat = 0
             foundStat = re.search('(\([0-9]+\))',current)
@@ -40,7 +40,7 @@ def parseStr(diceStr):
             else:
                 replaceBy = min(a)
             tempDiceStr = tempDiceStr.replace(current, str(replaceBy), 1)
-        x = re.findall('[0-9]*d(?:\([0-9]+\))?[0-9]+',tempDiceStr)
+        x = re.findall('[0-9]*d(?:\([\+\-]?[0-9]+\))?[0-9]+',tempDiceStr)
         for current in x:
             stat = 0
             foundStat = re.search('(\([0-9]+\))',current)
