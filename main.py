@@ -57,7 +57,7 @@ def parseStr(diceStr):
             replaceBy = delim.join(map(str,diceRes))
             replaceBy = '(' + replaceBy + ')'
             tempDiceStr = tempDiceStr.replace(current, replaceBy, 1)
-        ans += cubesStr + '` Result: `' + str(eval(tempDiceStr)) + '\n'
+        ans += '`' + cubesStr + '` Result: `' + str(eval(tempDiceStr)) + '`\n'
     return ans
 
 def rollDice(num, k, cubesStr, stat):
@@ -91,7 +91,7 @@ async def on_message(message):
         diceStr = message.content[6:]
         try:
             roll = parseStr(diceStr)
-            await message.channel.send(f'USING MY DIC(<:wonka:458194762290167819>)e:\n`{roll}`')
+            await message.channel.send(f'USING MY DIC(<:wonka:458194762290167819>)e:\n{roll}')
         except Exception as e:
             await message.channel.send(f"Expression down! There's a spy 'round 'ere: `{e}`")
         
