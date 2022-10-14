@@ -26,7 +26,7 @@ def parseStr(diceStr):
         x = re.findall('[ \+\-\*\/][\+\-]d(?:\([\+\-]?[0-9]+\))?[0-9]+',tempDiceStr)
         for current in x:
             stat = 0
-            foundStat = re.search('(\([0-9]+\))',current)
+            foundStat = re.search('(\([\+\-]?[0-9]+\))',current)
             newCur = current
             if foundStat != None:
                 stat = int(current[foundStat.start()+1:foundStat.end()-1])
@@ -43,7 +43,7 @@ def parseStr(diceStr):
         x = re.findall('[0-9]*d(?:\([\+\-]?[0-9]+\))?[0-9]+',tempDiceStr)
         for current in x:
             stat = 0
-            foundStat = re.search('(\([0-9]+\))',current)
+            foundStat = re.search('(\([\+\-]?[0-9]+\))',current)
             newCur = current
             if foundStat != None:
                 stat = int(current[foundStat.start()+1:foundStat.end()-1])
