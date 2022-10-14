@@ -61,17 +61,17 @@ def parseStr(diceStr):
     return ans
 
 def rollDice(num, k, cubesStr, stat):
-    val = {}
+    val = [0] * num
     realP = 0
     mu = (num + 1) / 2
     sig = mu / 3
     mu += stat
     for n in range(1,num+1):
-        val[n],_ = quad(lambda x : 1/(sqrt(2*np.pi) * sig) * np.e**(-(x-mu)**2/(2*sig**2)), n-0.5, n+0.5)
-        realP += val[n]
+        val[n-1],_ = quad(lambda x : 1/(sqrt(2*np.pi) * sig) * np.e**(-(x-mu)**2/(2*sig**2)), n-0.5, n+0.5)
+        realP += val[n-1]
     realP = 1 - realP
     realP /= num
-    for n in range(1,num+1):
+    for n in range(0,num):
         val[n] += realP
     retVal = random.choices(list(range(1,num+1)),val,k=k)
     cubesStr += str(retVal)
