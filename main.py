@@ -91,14 +91,14 @@ async def on_message(message):
         diceStr = message.content[6:]
         try:
             roll = parseStr(diceStr, False)
-            await message.channel.send(f'USING MY DIC(<:wonka:458194762290167819>)e:\n{roll}')
+            await message.channel.send(f'USING MY DIC ON {message.author.nick}:\n{roll}')
         except Exception as e:
             await message.channel.send(f"Expression down! There's a spy 'round 'ere: `{e}`")
     if message.content.startswith('!roII '):
         diceStr = message.content[6:]
         try:
             roll = parseStr(diceStr,True)
-            await message.channel.send(f'USING MY DIC(<:wonka:458194762290167819>)e:\n{roll}')
+            await message.channel.send(f'USING MY DIC ON {message.author.nick}:\n{roll}')
         except Exception as e:
             await message.channel.send(f"Expression down! There's a spy 'round 'ere: `{e}`")
         
