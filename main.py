@@ -23,35 +23,46 @@ def parseStr(diceStr):
     for i in range(0,repeats):
         tempDiceStr = diceStr
         cubesStr = ''
-        x = re.findall('[ \+\-\*\/][\+\-]d[0-9]*[^\+\-\/\*\n]',tempDiceStr)
+        x = re.findall('[ \+\-\*\/][\+\-]d(\([0-9]+\))?[0-9]+',tempDiceStr)
         for current in x:
+            stat = 0
+            foundStat = re.search('(\([0-9]+\))',current)
+            if foundStat != None:
+                stat = int(current[foundStat.start()+1:foundStat.end()-1])
+                current = current[:foundStat.start()] + current[foundStat.end():]
             current = current[1:]
             replaceBy = 0
             rolling = current[1:].split('d')
-            a,cubesStr = rollDice(int(rolling[1]),2,cubesStr)
+            a,cubesStr = rollDice(int(rolling[1]),2,cubesStr,stat)
             if current[0] == '+':
                 replaceBy = max(a)
             else:
                 replaceBy = min(a)
             tempDiceStr = tempDiceStr.replace(current, str(replaceBy), 1)
-        x = re.findall('[0-9]*d[0-9]*[^\+\-\/\*\n]',tempDiceStr)
+        x = re.findall('[0-9]*d(\([0-9]+\))?[0-9]+',tempDiceStr)
         for current in x:
+            stat = 0
+            foundStat = re.search('(\([0-9]+\))',current)
+            if foundStat != None:
+                stat = int(current[foundStat.start()+1:foundStat.end()-1])
+                current = current[:foundStat.start()] + current[foundStat.end():]
             replaceBy = 0
             rolling = current.split('d')
             if(rolling[0] == ''):
                 rolling[0] = '1'
             delim = '+'
-            diceRes,cubesStr = rollDice(int(rolling[1]),int(rolling[0]),cubesStr)
+            diceRes,cubesStr = rollDice(int(rolling[1]),int(rolling[0]),cubesStr,stat)
             replaceBy = delim.join(map(str,diceRes))
             tempDiceStr = tempDiceStr.replace(current, str(replaceBy), 1)
         ans += cubesStr + '` Result: `' + str(eval(tempDiceStr)) + '\n'
     return ans
 
-def rollDice(num, k, cubesStr):
+def rollDice(num, k, cubesStr, stat):
     val = {}
     realP = 0
     mu = (num + 1) / 2
     sig = mu / 3
+    mu += stat
     for n in range(1,num+1):
         val[n],_ = quad(lambda x : 1/(sqrt(2*np.pi) * sig) * np.e**(-(x-mu)**2/(2*sig**2)), n-0.5, n+0.5)
         realP += val[n]
