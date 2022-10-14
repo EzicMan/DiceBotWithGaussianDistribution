@@ -34,7 +34,7 @@ def parseStr(diceStr):
             else:
                 replaceBy = min(a)
             tempDiceStr = tempDiceStr.replace(current, str(replaceBy), 1)
-        x = re.findall('[0-9]*d[0-9][^\+\-\/\*\n]',tempDiceStr)
+        x = re.findall('[0-9]*d[0-9]*[^\+\-\/\*\n]',tempDiceStr)
         for current in x:
             replaceBy = 0
             rolling = current.split('d')
