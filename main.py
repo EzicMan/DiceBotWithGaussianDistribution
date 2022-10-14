@@ -23,37 +23,40 @@ def parseStr(diceStr):
     for i in range(0,repeats):
         tempDiceStr = diceStr
         cubesStr = ''
-        x = re.findall('[ \+\-\*\/][\+\-]d(\([0-9]+\))?[0-9]+',tempDiceStr)
+        x = re.findall('[ \+\-\*\/][\+\-]d(?:\([0-9]+\))?[0-9]+',tempDiceStr)
         for current in x:
             stat = 0
             foundStat = re.search('(\([0-9]+\))',current)
+            newCur = current
             if foundStat != None:
                 stat = int(current[foundStat.start()+1:foundStat.end()-1])
-                current = current[:foundStat.start()] + current[foundStat.end():]
-            current = current[1:]
+                newCur = current[:foundStat.start()] + current[foundStat.end():]
+            newCur = newCur[1:]
             replaceBy = 0
-            rolling = current[1:].split('d')
+            rolling = newCur[1:].split('d')
             a,cubesStr = rollDice(int(rolling[1]),2,cubesStr,stat)
-            if current[0] == '+':
+            if newCur[0] == '+':
                 replaceBy = max(a)
             else:
                 replaceBy = min(a)
             tempDiceStr = tempDiceStr.replace(current, str(replaceBy), 1)
-        x = re.findall('[0-9]*d(\([0-9]+\))?[0-9]+',tempDiceStr)
+        x = re.findall('[0-9]*d(?:\([0-9]+\))?[0-9]+',tempDiceStr)
         for current in x:
             stat = 0
             foundStat = re.search('(\([0-9]+\))',current)
+            newCur = current
             if foundStat != None:
                 stat = int(current[foundStat.start()+1:foundStat.end()-1])
-                current = current[:foundStat.start()] + current[foundStat.end():]
+                newCur = current[:foundStat.start()] + current[foundStat.end():]
             replaceBy = 0
-            rolling = current.split('d')
+            rolling = newCur.split('d')
             if(rolling[0] == ''):
                 rolling[0] = '1'
             delim = '+'
             diceRes,cubesStr = rollDice(int(rolling[1]),int(rolling[0]),cubesStr,stat)
             replaceBy = delim.join(map(str,diceRes))
-            tempDiceStr = tempDiceStr.replace(current, str(replaceBy), 1)
+            replaceBy = '(' + replaceBy + ')'
+            tempDiceStr = tempDiceStr.replace(current, replaceBy, 1)
         ans += cubesStr + '` Result: `' + str(eval(tempDiceStr)) + '\n'
     return ans
 
@@ -89,8 +92,8 @@ async def on_message(message):
         try:
             roll = parseStr(diceStr)
             await message.channel.send(f'USING MY DIC(<:wonka:458194762290167819>)e:\n`{roll}`')
-        except:
-            await message.channel.send("Expression down!")
+        except Exception as e:
+            await message.channel.send(f"Expression down! There's a spy 'round 'ere: `{e}`")
         
 
 client.run(TOKEN)
