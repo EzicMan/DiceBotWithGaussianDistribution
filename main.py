@@ -12,7 +12,7 @@ TOKEN = settings.TOKEN
 
 client = discord.Client()
 
-def parseStr(diceStr):
+def parseStr(diceStr, daemonMode):
     diceStr = diceStr.split(" ")
     repeats = 1
     if len(diceStr) > 1:
@@ -34,7 +34,7 @@ def parseStr(diceStr):
             newCur = newCur[1:]
             replaceBy = 0
             rolling = newCur[1:].split('d')
-            a,cubesStr = rollDice(int(rolling[1]),2,cubesStr,stat)
+            a,cubesStr = rollDice(int(rolling[1]),2,cubesStr,stat, daemonMode)
             if newCur[0] == '+':
                 replaceBy = max(a)
             else:
@@ -53,14 +53,14 @@ def parseStr(diceStr):
             if(rolling[0] == ''):
                 rolling[0] = '1'
             delim = '+'
-            diceRes,cubesStr = rollDice(int(rolling[1]),int(rolling[0]),cubesStr,stat)
+            diceRes,cubesStr = rollDice(int(rolling[1]),int(rolling[0]),cubesStr,stat,daemonMode)
             replaceBy = delim.join(map(str,diceRes))
             replaceBy = '(' + replaceBy + ')'
             tempDiceStr = tempDiceStr.replace(current, replaceBy, 1)
         ans += '`' + cubesStr + '` Result: `' + str(eval(tempDiceStr)) + '`\n'
     return ans
 
-def rollDice(num, k, cubesStr, stat):
+def rollDice(num, k, cubesStr, stat, daemonMode):
     val = [0] * num
     realP = 0
     mu = (num + 1) / 2
@@ -73,7 +73,7 @@ def rollDice(num, k, cubesStr, stat):
     realP /= num
     for n in range(0,num):
         val[n] += realP
-    retVal = random.choices(list(range(1,num+1)),val,k=k)
+    retVal = random.choices(list(range(1,num+1)),list(range(1,num+1)) if daemonMode else val,k=k)
     cubesStr += str(retVal)
     return retVal, cubesStr
 
@@ -90,7 +90,14 @@ async def on_message(message):
     if message.content.startswith('!roll '):
         diceStr = message.content[6:]
         try:
-            roll = parseStr(diceStr)
+            roll = parseStr(diceStr, False)
+            await message.channel.send(f'USING MY DIC(<:wonka:458194762290167819>)e:\n{roll}')
+        except Exception as e:
+            await message.channel.send(f"Expression down! There's a spy 'round 'ere: `{e}`")
+    if message.content.startswith('!roII '):
+        diceStr = message.content[6:]
+        try:
+            roll = parseStr(diceStr,True)
             await message.channel.send(f'USING MY DIC(<:wonka:458194762290167819>)e:\n{roll}')
         except Exception as e:
             await message.channel.send(f"Expression down! There's a spy 'round 'ere: `{e}`")
