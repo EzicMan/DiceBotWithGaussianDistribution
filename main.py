@@ -10,9 +10,13 @@ import re
 
 TOKEN = settings.TOKEN
 
-client = discord.Client()
+intents = discord.Intents.default()
+intents.message_content = True
+
+client = discord.Client(intents=intents)
 
 def parseStr(diceStr, daemonMode):
+    diceStr = diceStr.strip()
     diceStr = diceStr.split(" ")
     repeats = 1
     if len(diceStr) > 1:
@@ -39,7 +43,7 @@ def parseStr(diceStr, daemonMode):
                 replaceBy = max(a)
             else:
                 replaceBy = min(a)
-            tempDiceStr = tempDiceStr.replace(current, str(replaceBy), 1)
+            tempDiceStr = tempDiceStr.replace(current[1:], str(replaceBy), 1)
         x = re.findall('[0-9]*d(?:\([\+\-]?[0-9]+\))?[0-9]+',tempDiceStr)
         for current in x:
             stat = 0
@@ -89,18 +93,36 @@ async def on_message(message):
 
     if message.content.startswith('!roll '):
         diceStr = message.content[6:]
+        pos = diceStr.find('!')
+        reason = ''
+        if pos == -1:
+            reason = 'no reason'
+        else:
+            reason = diceStr[pos+1:]
+        reason = reason.strip()
+        if pos != -1:
+            diceStr = diceStr[:pos]
         try:
             roll = parseStr(diceStr, False)
-            await message.channel.send(f'USING MY DICᵉ ON {message.author.nick if message.author.nick != None else message.author.name}:\n{roll}')
+            await message.channel.send(f'USING MY DICᵉ ON {message.author.nick if message.author.nick != None else message.author.name} as requested `{message.content}`:\n{roll}reason:`{reason}`')
         except Exception as e:
             await message.channel.send(f"Expression down! There's a spy 'round 'ere: `{e}`")
     if message.content.startswith('!roII '):
         diceStr = message.content[6:]
+        pos = diceStr.find('!')
+        reason = ''
+        if pos == -1:
+            reason = 'no reason'
+        else:
+            reason = diceStr[pos+1:]
+        reason = reason.strip()
+        if pos != -1:
+            diceStr = diceStr[:pos]
         try:
             roll = parseStr(diceStr,True)
-            await message.channel.send(f'USING MY DICᵉ ON {message.author.nick if message.author.nick != None else message.author.name}:\n{roll}')
+            await message.channel.send(f'USING MY DICᵉ ON {message.author.nick if message.author.nick != None else message.author.name} as requested `{message.content}`:\n{roll}reason:`{reason}`')
         except Exception as e:
             await message.channel.send(f"Expression down! There's a spy 'round 'ere: `{e}`")
-        
+
 
 client.run(TOKEN)
